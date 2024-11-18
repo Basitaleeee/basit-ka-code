@@ -8,8 +8,11 @@ class MyCustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  MyCustomBottomNavigationBar({required this.currentIndex, required this.onTap});
-
+  MyCustomBottomNavigationBar(
+      {required this.currentIndex,
+      required this.onTap,
+      Key? key,})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> navItems = [

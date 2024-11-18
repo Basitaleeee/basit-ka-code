@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lookbook/User%20Interface/DESIGNER%20View/photographer.dart';
@@ -21,10 +22,16 @@ import 'Add Category.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+// Add this function to generate a unique product ID
+String generateProductID() {
+  final random = Random();
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  return List.generate(8, (index) => chars[random.nextInt(chars.length)]).join();
+}
+
 class AddProductScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Access the ProductProvider
     final productProvider = Provider.of<ProductProvider>(context);
 
     // Initialize TextEditingControllers
@@ -84,7 +91,7 @@ class AddProductScreen extends StatelessWidget {
                   height: 190.h,
                   width: 272.h,
                   onImagesPicked: (images) {
-                    productProvider.selectedImages = images; // Assign images to the provider
+                    productProvider.selectedImages = images;
                   },
                 ),
               ),
@@ -169,7 +176,6 @@ class AddProductScreen extends StatelessWidget {
               SizedBox(height: 20.h),
               RoundedButton(
                 onPressed: () async {
-                  // Validation
                   if (_nameController.text.isEmpty ||
                       _priceController.text.isEmpty ||
                       _descriptionController.text.isEmpty ||
@@ -181,6 +187,9 @@ class AddProductScreen extends StatelessWidget {
                   }
 
                   try {
+                    // Generate unique product ID
+                    String productId = generateProductID();
+
                     // Collect product data from text fields
                     String name = _nameController.text;
                     String price = _priceController.text;
@@ -195,16 +204,13 @@ class AddProductScreen extends StatelessWidget {
                     // Collect social links from provider
                     List<String> socialLinks = productProvider.selectedSocialLinks;
 
-                    // Add product data to Firestore
-                    String productId = FirebaseFirestore.instance.collection('products').doc().id;
-
                     // Upload images to Firebase Storage
                     List<String> imageUrls = [];
                     if (productProvider.selectedImages.isNotEmpty) {
                       for (var image in productProvider.selectedImages) {
                         String fileName = DateTime.now().millisecondsSinceEpoch.toString();
                         Reference ref = FirebaseStorage.instance.ref().child('product_images/$fileName');
-                        await ref.putFile(File(image.path)); // Assuming images are picked as File objects
+                        await ref.putFile(File(image.path));
                         String imageUrl = await ref.getDownloadURL();
                         imageUrls.add(imageUrl);
                       }
@@ -212,6 +218,7 @@ class AddProductScreen extends StatelessWidget {
 
                     // Save product data to Firestore
                     await FirebaseFirestore.instance.collection('products').doc(productId).set({
+                      'productId': productId, // Add the product ID to Firestore
                       'name': name,
                       'price': price,
                       'description': description,
@@ -222,16 +229,19 @@ class AddProductScreen extends StatelessWidget {
                       'event': event,
                       'eventDate': eventDate,
                       'images': imageUrls,
-                      //gofdjfa
-                      'socialLinks': socialLinks, // Save social links as a list
+                      'socialLinks': socialLinks,
                       'timestamp': FieldValue.serverTimestamp(),
                     });
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Product added successfully!')),
+                    );
 
                     // Navigate to Photographer screen and pass the productId
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Photographer(productId: productId),  // Pass productId to Photographer screen
+                        builder: (context) => Photographer(productId: productId),
                       ),
                     );
 
@@ -239,6 +249,7 @@ class AddProductScreen extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Error: $e')),
                     );
+                    print('Error adding product: $e');
                   }
                 },
                 text: 'NEXT',
