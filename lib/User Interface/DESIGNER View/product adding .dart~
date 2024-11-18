@@ -1,0 +1,69 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:today/Reusable/Image_picker.dart';
+import 'package:today/Reusable/app_colors.dart';
+import '../../Reusable/Combined Text+icon.dart';
+import '../../Reusable/Fonts.dart';
+import '../../reusable/Text Button.dart';
+import 'ProductAdd.dart';
+
+class FirstScreen extends StatefulWidget {
+  @override
+  State<FirstScreen> createState() => _FirstScreenState();
+}
+
+class _FirstScreenState extends State<FirstScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Column(
+          children: [
+            Text(
+              'LOOK',
+              style: tSStyleBlack18400,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 70.0),
+              child: Text('BOOK',
+                  style:
+                      tSStyleBlack18400.copyWith(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            CombinedTextWithLineWidget(text: 'ADD PRODUCT',),
+            SizedBox(height:90),
+            SvgPicture.asset('assets/Icons/shopping.svg',height: 250,),
+            SizedBox(height: 35),
+            ReusableTextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddProductScreen()),
+                );
+              },
+              backgroundColor: AppColors.secondary,
+              icon: Icons.add,
+              buttonText: 'ADD NEW PRODUCT',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

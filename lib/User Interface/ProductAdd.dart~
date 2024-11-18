@@ -1,0 +1,164 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:today/Reusable/Custome%20calender.dart'; // CustomDateTextField import
+import 'package:today/Reusable/Dropdownfield.dart';
+import 'package:today/Reusable/Image_picker.dart';
+import 'package:today/User%20Interface/photographer.dart';
+import 'package:today/User%20Interface/social_page.dart';
+import '../reusable/Text Button.dart';
+import 'package:today/Reusable/app_colors.dart';
+import 'package:today/Reusable/customText%20field.dart';
+import 'package:today/User%20Interface/product_provider/product.dart';
+import '../Reusable/Combined Text+icon.dart';
+import '../Reusable/Custom CircularAvatar.dart';
+import '../Reusable/Custom Color widget.dart';
+import '../Reusable/Custom TextColumn.dart';
+import '../Reusable/Fonts.dart';
+import '../Reusable/description textfield.dart';
+import 'Add Category.dart';
+
+class AddProductScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(context);
+    final TextEditingController _categoryController = TextEditingController();
+    final TextEditingController _nameController = TextEditingController();
+    final TextEditingController _priceController = TextEditingController();
+    final TextEditingController _descriptionController = TextEditingController();
+    final TextEditingController _quantityController = TextEditingController();
+    final TextEditingController _barcodeController = TextEditingController();
+    final TextEditingController _eventController = TextEditingController();
+    final TextEditingController _dateController = TextEditingController();
+    final TextEditingController _colorController = TextEditingController();
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Column(
+          children: [
+            Text('LOOK', style: tSStyleBlack18400),
+            Padding(
+              padding: const EdgeInsets.only(left: 70.0),
+              child: Text('BOOK',
+                  style: tSStyleBlack18400.copyWith(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 30.h),
+              CombinedTextWithLineWidget(text: 'Add Product'),
+              SizedBox(height: 40.h),
+              Center(
+                  child: ImagePickerWidget(height: 190.h, width: 272.h)),
+              SizedBox(height: 5.h),
+              CustomTextColumnWidget(
+                firstText: 'ADD PRODUCT IMAGES ',
+                secondText: '[MAX 3 IMAGES ]',
+              ),
+              SizedBox(height: 30.h),
+              CustomDropdownField(
+                controller: _categoryController,
+                labelText: 'Category',
+                items: ['Clothing', 'Shoes', 'Etc.'],
+              ),
+              Row(children: [
+                Text('Add Category', style: tSStyleBlack18400.copyWith(fontSize: 15.sp)),
+                InkWell(
+                  onTap: () {
+                    _categoryController.clear();
+                    showAddCategoryBottomSheet(context);
+                  },
+                  child: Icon(Icons.add_circle_outline, color: AppColors.secondary, size: 20.sp),
+                )
+              ]),
+              SizedBox(height: 15.h),
+              CustomTextField(controller: _nameController, label: 'Dress Title', labelText: 'Dress Title',),
+              CustomTextField(controller: _priceController, label: 'Price', labelText: 'Price',),
+              CustomDescriptionTextField(
+                controller: _descriptionController,
+                maxLines: 10,
+                minLines: 1,
+                labelText: 'Description',
+                hintText: 'Type here',
+              ),
+              Text('Colors', style: tSStyleBlack18400.copyWith()),
+              SizedBox(height: 10.h),
+              CustomColorPickerTextField(controller: _colorController),
+              Text('Sizes', style: tSStyleBlack18400.copyWith()),
+              SizedBox(height: 10.h),
+              CustomContainerWidget(sizeLabels: ['S', 'M', 'L']),
+              SizedBox(height: 10.h),
+              CustomTextField(controller: _quantityController, label: 'Minimum Order Quantity', labelText: 'Minimum Order Quantity',),
+              Row(children: [
+                Text('Add Social Links', style: tSStyleBlack18400.copyWith(fontSize: 15.sp)),
+                GestureDetector(
+                  onTap: () {
+                    showSocialLinksBottomSheet(context);
+                  },
+                  child: Icon(Icons.add_circle_outline, color: AppColors.secondary, size: 20.sp),
+                ),
+              ]),
+              SizedBox(height: 10.h),
+              CustomTextField(controller: _barcodeController, label: 'Barcode', labelText: 'Barcode',),
+              CustomTextField(controller: _eventController, label: 'Event', labelText: 'Event',),
+              Text('Event Date', style: tSStyleBlack18400.copyWith(fontSize: 15.sp)),
+              SizedBox(height: 10.h),
+              CustomDateTextField(controller: _dateController),
+              SizedBox(height: 20.h),
+              ReusableTextButton(
+                onPressed: () {
+                  // Validation
+                  if (_nameController.text.isEmpty ||
+                      _priceController.text.isEmpty ||
+                      _descriptionController.text.isEmpty ||
+                      _quantityController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Please fill in all fields.')),
+                    );
+                    return;
+                  }
+
+                  // Collect product data for review
+                  productProvider.setProductData(
+                    name: _nameController.text,
+                    price: _priceController.text,
+                    description: _descriptionController.text,
+                    photographerName: '',
+                    images: productProvider.selectedImages.isNotEmpty
+                        ? productProvider.selectedImages
+                        : [],
+                    photographerEmail: '',
+                    photographerPhone: '',
+                    socialLinks: '',
+                  );
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Photographer()),
+                  );
+                },
+                backgroundColor: AppColors.secondary,
+                icon: Icons.arrow_forward_outlined,
+                buttonText: 'NEXT',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
