@@ -70,13 +70,16 @@ class _PhotographerState extends State<Photographer> {
               Center(
                 child: GestureDetector(
                   onTap: () async {
-                    // Placeholder for image picker
-                    await photographerProvider.pickImage();
+                    // Trigger image picking and uploading
+                    await photographerProvider.pickImage(
+                        context: context,
+                        onImagePicked: (String imageUrl) {},
+                        onError: (String error) {});
                   },
                   child: ImagePickerWidget(
                     height: 200,
                     width: 500,
-                    onImagesPicked: (images) {},
+                    onImagesPicked: (images) {}, // Placeholder
                   ),
                 ),
               ),
@@ -127,6 +130,13 @@ class _PhotographerState extends State<Photographer> {
                     return;
                   }
 
+                  if (photographerProvider.imageUrl == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Please upload an image.')),
+                    );
+                    return;
+                  }
+
                   // Add photographer to Firestore using provider
                   try {
                     final photographer = PhotographerModel(
@@ -134,27 +144,24 @@ class _PhotographerState extends State<Photographer> {
                       email: _emailsController.text,
                       phone: _phoneController.text,
                       socialLinks: _socialLinksController.text,
-                      imageUrl: photographerProvider.imageUrl, // Placeholder
+                      imageUrl: photographerProvider.imageUrl!,
                     );
 
-                    // Add photographer data to the 'photographers' subcollection under productId
                     await FirebaseFirestore.instance
                         .collection('products')
-                        .doc(widget.productId) // Access the product document
-                        .collection(
-                            'photographers') // Create a subcollection for photographers
-                        .add(photographer.toMap()); // Convert model to map
+                        .doc(widget.productId)
+                        .collection('photographers')
+                        .add(photographer.toMap());
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                           content: Text('Photographer added successfully!')),
                     );
 
-                    final productId = widget.productId;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
+                        builder: (context) => ProductReviewScreen(productId: widget.productId,),
                       ),
                     );
                   } catch (e) {

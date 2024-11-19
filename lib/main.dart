@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Controllers/button_controller.dart';
+import 'User Interface/Admin/Dashboard Screen.dart';
+import 'User Interface/Customer View/Home Screen.dart';
+import 'User Interface/DESIGNER View/HOME.dart';
 import 'User Interface/DESIGNER View/product_provider/photographer provider.dart';
 import 'User Interface/DESIGNER View/product_provider/product.dart';
 import 'User Interface/DESIGNER View/product_provider/productreviwe notifier.dart';
@@ -46,9 +50,44 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: Welcome(),     // Your home screen
+          home:  AuthWrapper(),     // Your home screen
         );
       },
     );
   }
+
 }
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  Future<String?> getUserRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('role'); // Fetch role from SharedPreferences
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String?>(
+      future: getUserRole(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasData && snapshot.data != null) {
+          String role = snapshot.data!;
+          if (role == 'Admin') {
+            return DashboardScreen();
+          } else if (role == 'CUSTOMER') {
+            return CustomerHomeScreen();
+          } else if (role == 'DESIGNER') {
+            return HomeScreen();
+          }
+        }
+
+        return Welcome(); // Default to Welcome screen for new users
+      },
+    );
+  }
+}
+

@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Reusable/Dropdownfield.dart';
 import '../../Reusable/Fonts.dart';
 import '../../Reusable/app_colors.dart';
+import '../Welcome.dart';
 
 class AboutScreen extends StatelessWidget {
   final TextEditingController _categoryController = TextEditingController();
@@ -70,19 +73,40 @@ class AboutScreen extends StatelessWidget {
             Spacer(),
             // Logout button
             ElevatedButton(
-                onPressed: () {
-                  // Add logout functionality
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary, // Customize to your app's color scheme
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text("LOGOUT",
-                    style: tSStyleBlack18400.copyWith(color: Colors.white)),
+              onPressed: () async {
+                try {
+                  // Clear user data from SharedPreferences
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  await prefs.clear();
 
+                  // Sign out from Firebase
+                  await FirebaseAuth.instance.signOut();
+
+                  // Navigate back to the Welcome screen
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Welcome()),
+                        (route) => false, // Remove all routes in the stack
+                  );
+                } catch (e) {
+                  print('Logout Error: ${e.toString()}');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error logging out: ${e.toString()}')),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.secondary, // Customize to your app's color scheme
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
+              child: Text(
+                "LOGOUT",
+                style: tSStyleBlack18400.copyWith(color: Colors.white),
+              ),
+            ),
+
 
           ],
         ),

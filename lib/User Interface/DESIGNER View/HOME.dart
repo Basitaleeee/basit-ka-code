@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lookbook/User%20Interface/DESIGNER%20View/products%20detail.dart';
 import '../../Reusable/Bottom Navgation Bar.dart';
 import '../../Reusable/Combined Text+icon.dart';
 import '../../Reusable/Fonts.dart';
 import '../../Reusable/Product Card.dart';
 import '../../Reusable/app_colors.dart';
+import '../../Reusable/mere reusable.dart';
 import 'Add product 2.dart';
 import 'Chat Screen.dart';
 import 'Notification Screen.dart';
@@ -124,9 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProductReviewScreen(
-                                productId: products[index]['id'],
-                              ),
+                              builder: (context) => Productdetails1(
+                                productId: products[index]['productId'] ?? 'no product ID',
+                              )
                             ),
                           );
                         },

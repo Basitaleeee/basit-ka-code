@@ -6,10 +6,11 @@ import '../../Reusable/Custom Small Button.dart';
 import '../../Reusable/app_colors.dart';
 import '../../Reusable/Fonts.dart';
 import 'Add product 2.dart';
+import 'Edit_Product.dart';
 import 'HOME.dart';
 
 class ProductReviewScreen extends StatelessWidget {
-  final String productId;
+  final String? productId;
 
   ProductReviewScreen({required this.productId});
 
@@ -24,6 +25,7 @@ class ProductReviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(productId);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -121,6 +123,17 @@ class ProductReviewScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 20.h),
+                  Row(
+                    children: [
+                      Text('Minimum Order Quantity',
+                          style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
+                      SizedBox(width: 10.w),
+                      Text('[ ${product['quantity'] ?? 'N/A'} ]',
+                          style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+
                   Container(
                     child: Row(
                       children: [
@@ -151,22 +164,12 @@ class ProductReviewScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 40.h),
-                  Row(
-                    children: [
-                      Text('Minimum Order Quantity',
-                          style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
-                      SizedBox(width: 10.w),
-                      Text('[ ${product['minOrderQuantity'] ?? 'N/A'} ]',
-                          style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
-                    ],
-                  ),
                   SizedBox(height: 30.h),
                   RoundedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => AddProductScreen()),
+                        MaterialPageRoute(builder: (context) => EditProductScreen(productId: productId?? '')),
                       );
                     },
                     text: 'EDIT',
@@ -181,6 +184,7 @@ class ProductReviewScreen extends StatelessWidget {
                     },
                     text: 'DONE',
                   ),
+                  SizedBox(height: 150.h),
                 ],
               ),
             ),

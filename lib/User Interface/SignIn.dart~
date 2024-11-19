@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../Reusable/Fonts.dart';
 import '../Reusable/app_colors.dart';
 import '../reusable/Header.dart';
@@ -55,7 +54,7 @@ class Lookbook1state extends State<Lookbook1> {
             .doc(userCredential.user?.uid)
             .get();
 
-        String role = userDoc['role'] ?? '';
+        String role = userDoc['role'] ?? ''; // Safely get the role
 
         if (role.isEmpty) {
           setState(() {
@@ -64,10 +63,6 @@ class Lookbook1state extends State<Lookbook1> {
           });
           return;
         }
-
-        // Save role to SharedPreferences
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('role', role);
 
         // Redirect based on role
         if (role == 'Admin') {
@@ -105,7 +100,6 @@ class Lookbook1state extends State<Lookbook1> {
       print('Error in sign-in: ${e.toString()}');
     }
   }
-
 
   // Google Sign-In
   Future<void> _signInWithGoogle() async {

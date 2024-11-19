@@ -44,5 +44,10 @@ class PhotographerProvider with ChangeNotifier {
     }
   }
 
-  pickImage () {}
+  pickImage(
+      {required BuildContext context,
+      required void Function(String imageUrl) onImagePicked,
+      required void Function(String error) onError}) {}
+  // uploading image on the firebase
+
 }
