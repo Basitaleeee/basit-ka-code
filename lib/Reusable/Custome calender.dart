@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // For formatting the selected date
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+
+import 'Fonts.dart';
+import 'app_colors.dart'; // For formatting the selected date
 
 class CustomDateTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -23,6 +27,11 @@ class _CustomDateTextFieldState extends State<CustomDateTextField> {
           controller: widget.controller,
           readOnly: true, // Makes the field non-editable directly
           decoration: InputDecoration(
+            hintText: '2025-01-01',
+            hintStyle: tSStyleBlack16400.copyWith(
+              fontSize: 14.sp,
+              color: AppColors.greylight,
+            ),
             suffixIcon: IconButton(
               icon: Icon(Icons.calendar_month),
               onPressed: () {
@@ -48,7 +57,7 @@ class _CustomDateTextFieldState extends State<CustomDateTextField> {
 
     if (pickedDate != null) {
       // Format the selected date and set it in the controller
-      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
       setState(() {
         widget.controller.text = formattedDate; // Populate the text field with selected date
       });

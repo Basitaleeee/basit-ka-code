@@ -20,9 +20,7 @@ class CombinedTextWithLineWidget extends StatelessWidget {
         children: [
           Text(
             text, // Use the text parameter
-            style: tSStyleBlack18400.copyWith(
-              fontSize: fontSize.sp, // Use the font size parameter
-            ),
+            style: tSStyleBlack20500,
           ),
           SizedBox(height: 5.h), // Optional space between text and line
           SvgPicture.asset(

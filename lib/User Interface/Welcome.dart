@@ -70,8 +70,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             child: Text(
               "FASHION",
               style: aStyleBlack48400.copyWith(
-                fontSize: 40,
-                color: Colors.white,
+                color: AppColors.white,
               ),
             ),
           ),
@@ -82,9 +81,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             child: AutoSizeText(
               "Discover the latest trends, styles and exclusive collections",
               style: tSStyleBlack18400.copyWith(
-                fontSize: 14,
-                color: Colors.white,
+                color: AppColors.white,
               ),
+
               maxLines: 2,
               minFontSize: 12,
               maxFontSize: 18,
@@ -114,7 +113,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               child: Text(
                 "Continue",
                 style: tSStyleBlack18400.copyWith(
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
               ),
             ),

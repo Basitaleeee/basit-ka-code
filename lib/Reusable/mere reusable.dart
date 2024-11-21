@@ -4,13 +4,17 @@ import 'package:shimmer/shimmer.dart';
 import 'Fonts.dart';
 import 'app_colors.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 class ProductCard extends StatelessWidget {
   final String imagePath;
   final String title;
   final String subtitle;
   final String price;
   final VoidCallback onTap;
-  const ProductCard({
+
+   ProductCard({
     Key? key,
     required this.imagePath,
     required this.title,
@@ -23,23 +27,25 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            width: 187.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.r),
-              color: AppColors.primaryColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0x29000000),
-                  blurRadius: 4.0,
-                  spreadRadius: 0.0,
-                  offset: Offset(0.0, 4.0),
-                ),
-              ],
+      child: Container(
+        width: 187.w,
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.r),
+          color: AppColors.primaryColor,
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x29000000),
+              blurRadius: 4.0,
+              spreadRadius: 0.0,
+              offset: Offset(0.0, 4.0),
             ),
-            child: ClipRRect(
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipRRect(
               borderRadius: BorderRadius.circular(10.r),
               child: imagePath.isNotEmpty
                   ? Image.network(
@@ -64,6 +70,7 @@ class ProductCard extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     width: 187.w,
+                    height: 226.h,
                     color: Colors.grey,
                     child: Center(
                       child: Icon(
@@ -76,10 +83,8 @@ class ProductCard extends StatelessWidget {
               )
                   : Container(
                 width: 187.w,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.r),
-                  color: Colors.grey,
-                ),
+                height: 226.h,
+                color: Colors.grey,
                 child: Center(
                   child: Icon(
                     Icons.image,
@@ -88,24 +93,20 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-
-          Container(
-            width: 187.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            SizedBox(height: 8.h), // Add spacing between image and text
+            Column(
               children: [
                 Text(
                   title,
                   style: tSStyleBlack14400,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   subtitle,
                   style: tSStyleBlack14400,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   price,
@@ -115,12 +116,13 @@ class ProductCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
+
 
 class FullScreenImageViewer extends StatelessWidget {
   final String imagePath;
@@ -185,7 +187,7 @@ class ProductCard2 extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            // height: 180.h,
+          // height: 180.h,
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
@@ -211,7 +213,7 @@ class ProductCard2 extends StatelessWidget {
                 imagePath,
                 fit: BoxFit.cover,
                 width: double.infinity,
-                height: 180.h,
+              height: 180.h,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) {
                     return child;
@@ -221,7 +223,7 @@ class ProductCard2 extends StatelessWidget {
                     highlightColor: Colors.grey[100]!,
                     child: Container(
                       width: double.infinity,
-                      height: 180.h,
+                    //height: 180.h,
                       color: Colors.white,
                     ),
                   );
@@ -229,7 +231,7 @@ class ProductCard2 extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     width: double.infinity,
-                    height: 180.h,
+                 // height: 180.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10.r),
@@ -249,7 +251,7 @@ class ProductCard2 extends StatelessWidget {
             )
                 : Container(
               width: double.infinity,
-              height: 180.h,
+          //  height: 180.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10.r),
@@ -266,6 +268,7 @@ class ProductCard2 extends StatelessWidget {
             ),
           ),
           Container(
+            width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(10.r),
@@ -284,7 +287,7 @@ class ProductCard2 extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.only(left: 10.w),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -293,11 +296,12 @@ class ProductCard2 extends StatelessWidget {
                     maxLines: 1,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 3.w, top: 5.h, bottom: 5.h),
+                    padding: EdgeInsets.only(left: 3.w, top: 0.h, bottom: 0.h),
                     child: Text(
                       subtitle,
                       style: tSStyleBlack10400,
                       maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(

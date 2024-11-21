@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 import '../../Models/photographer.dart';
 import '../../Reusable/Button.dart';
 import '../../Reusable/Combined Text+icon.dart';
+import '../../Reusable/Fonts.dart';
 import '../../Reusable/Image_picker.dart';
 import '../../Reusable/customText field.dart';
 import '../../Reusable/app_colors.dart';
+import '../../Reusable/description textfield.dart';
 import 'HOME.dart';
 import 'Product Review.dart';
 
@@ -23,9 +25,11 @@ class Photographer extends StatefulWidget {
 class _PhotographerState extends State<Photographer> {
   final TextEditingController _emailsController = TextEditingController();
   final TextEditingController _photographerNameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _socialLinksController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _aboutController = TextEditingController(); // Added for About
+   String image= 'imageUrl';
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +38,24 @@ class _PhotographerState extends State<Photographer> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Column(
           children: [
             Text(
               'LOOK',
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+              style: aStyleBlack14400.copyWith(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 70.0),
               child: Text(
                 'BOOK',
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                style: aStyleBlack14400.copyWith(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -73,26 +84,38 @@ class _PhotographerState extends State<Photographer> {
                     // Trigger image picking and uploading
                     await photographerProvider.pickImage(
                         context: context,
-                        onImagePicked: (String imageUrl) {},
-                        onError: (String error) {});
+                        onImagePicked: (String imageUrl) {
+                          setState(() {
+                            image = imageUrl;
+                          });
+                          print(image);
+
+                          // You can handle the image picked here if needed
+                        },
+                        onError: (String error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(error)),
+                          );
+                        });
                   },
                   child: ImagePickerWidget(
                     height: 200,
                     width: 500,
-                    onImagesPicked: (images) {}, // Placeholder
+                    onImagesPicked: (images) {
+                      // Placeholder
+                    },
                   ),
                 ),
               ),
               SizedBox(height: 15.h),
               CustomTextField(
                 controller: _photographerNameController,
-                label: 'Photographer Name',
-                labelText: 'Photographer Name',
+
+                labelText: 'Photographer Name', hintText: 'Name',
               ),
               CustomTextField(
                 controller: _socialLinksController,
-                label: 'Social Links',
-                labelText: 'Social Links',
+                labelText: 'Social Links', hintText: 'Instagram, Facebook',
               ),
               Row(
                 children: [
@@ -113,12 +136,19 @@ class _PhotographerState extends State<Photographer> {
               SizedBox(height: 15.h),
               CustomTextField(
                   controller: _phoneController,
-                  label: 'Phone',
-                  labelText: 'Phone'),
+
+                  labelText: 'Phone', hintText: 'Phone',),
               CustomTextField(
                   controller: _emailsController,
-                  label: 'Email',
-                  labelText: 'Email'),
+
+                  labelText: 'Email', hintText: 'basit@gmail.com',),
+              CustomDescriptionTextField(
+                controller: _aboutController,
+                maxLines: 10,
+                minLines: 5,
+                labelText: 'About',
+                hintText: 'Type here',
+              ),
               RoundedButton(
                 onPressed: () async {
                   if (_photographerNameController.text.isEmpty ||
@@ -130,21 +160,20 @@ class _PhotographerState extends State<Photographer> {
                     return;
                   }
 
-                  if (photographerProvider.imageUrl == null) {
+                  if (image == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Please upload an image.')),
                     );
                     return;
                   }
-
-                  // Add photographer to Firestore using provider
                   try {
                     final photographer = PhotographerModel(
                       name: _photographerNameController.text,
                       email: _emailsController.text,
                       phone: _phoneController.text,
                       socialLinks: _socialLinksController.text,
-                      imageUrl: photographerProvider.imageUrl!,
+                      imageUrl: image,
+                      about: _aboutController.text,  // Added "About" field here
                     );
 
                     await FirebaseFirestore.instance
@@ -161,7 +190,7 @@ class _PhotographerState extends State<Photographer> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProductReviewScreen(productId: widget.productId,),
+                        builder: (context) => ProductReviewScreen(productId: widget.productId),
                       ),
                     );
                   } catch (e) {

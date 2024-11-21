@@ -1,73 +1,102 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../Reusable/Fonts.dart';
-import '../../reusable/Text Button.dart';
-import '../../reusable/image container.dart';
+import '../../Reusable/Text Button.dart';
+import '../../Reusable/app_colors.dart';
+import '../../Reusable/app_images.dart';
 import '../Signup.dart';
 
-class Rolescreen extends StatefulWidget {
-  Rolescreen({super.key});
+class CreateWithScreen extends StatefulWidget {
+  const CreateWithScreen({super.key});
 
   @override
-  State<Rolescreen> createState() => _RolescreenState();
+  _CreateWithScreenState createState() => _CreateWithScreenState();
 }
 
-class _RolescreenState extends State<Rolescreen> {
+class _CreateWithScreenState extends State<CreateWithScreen> {
+  String selectedButton = '';
+
+  void updateButtonSelection(String button) {
+    setState(() {
+      selectedButton = button;
+    });
+  }
+
+  void navigateToSignup2(String role) {
+    Navigator.pushNamed(context, 'Signup2', arguments: role);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              ReusableImageContainer(
-                height: screenHeight * 0.4,
-                imagePath: "assets/Images/splash.png",
-                gradientColors: [Colors.blue, Colors.red],
-                backgroundColor: Colors.transparent,
-                child: const Column(),
+      body: SingleChildScrollView( // Wrap the entire body in a SingleChildScrollView
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                AppImages.splash,
               ),
-              SizedBox(height: screenHeight * 0.09),
-              Text(
-                "CREATE WITH",
-                style: aStyleBlack32400.copyWith(
-                  fontSize: screenWidth * 0.1,
-                  fontWeight: FontWeight.bold,
-                )
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 40.0.h,
+                horizontal: 24.0.w,
               ),
-              SizedBox(height: screenHeight * 0.03),
-              ReusableTextButton(
-                buttonText: "DESIGNER",
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Signup2(role: 'DESIGNER'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(
+                      'CREATE WITH',
+                      style: aStyleBlack48400,
                     ),
-                  );
-                },
-                backgroundColor: null,
-                icon: Icons.arrow_forward,
-
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              ReusableTextButton(
-                buttonText: "CUSTOMER",
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Signup2(role: 'CUSTOMER'),
+                  ),
+                  SizedBox(height: 10.h),
+                  SizedBox(
+                    height: 58.h,
+                    child: ReusableTextButton(
+                      icon: Icons.arrow_forward_outlined,
+                      buttonText: 'DESIGNER',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Signup2(role: 'DESIGNER'),
+                          ),
+                        );
+                      },
+                      color: selectedButton == 'DESIGNER'
+                          ? AppColors.secondary
+                          : AppColors.greylight,
                     ),
-                  );
-                },
-                backgroundColor: null,
-                icon: Icons.arrow_forward,
+                  ),
+                  SizedBox(height: 10.h),
+                  SizedBox(
+                    height: 58.h,
+                    child: ReusableTextButton(
+                      icon: Icons.arrow_forward_outlined,
+                      buttonText: 'CUSTOMER',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Signup2(role: 'CUSTOMER'),
+                          ),
+                        );
+                      },
+                      color: selectedButton == 'CUSTOMER'
+                          ? AppColors.secondary
+                          : AppColors.greylight,
+                    ),
+                  ),
+                  SizedBox(height: 20.h), // Add some extra space at the bottom
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

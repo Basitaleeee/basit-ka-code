@@ -63,13 +63,13 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               shrinkWrap: true,
               itemCount: _images.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 4.0,
-                mainAxisSpacing: 4.0,
+                crossAxisCount: 1,
+                // crossAxisSpacing: 4.0,
+                // mainAxisSpacing: 4.0,
               ),
               itemBuilder: (context, index) {
                 return ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  //borderRadius: BorderRadius.circular(10),
                   child: Image.file(
                     _images[index],
                     fit: BoxFit.cover,
@@ -90,7 +90,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
       ],
     );
   }

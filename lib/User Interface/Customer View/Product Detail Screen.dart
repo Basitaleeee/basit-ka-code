@@ -135,7 +135,6 @@ class CustomerReviewScreen extends StatelessWidget {
                         CustomSmallButton(
                           height: 30,
                           text: 'VIEW',
-                          icon: Icons.arrow_forward_outlined,
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -168,7 +167,7 @@ class CustomerReviewScreen extends StatelessWidget {
                         CustomSmallButton(
                           height: 30,
                           text: 'VIEW',
-                          icon: Icons.arrow_forward_outlined,
+
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -202,7 +201,6 @@ class CustomerReviewScreen extends StatelessWidget {
                 height: 50,
                 width: 150,
                 text: "REPORT",
-                icon: Icons.arrow_forward_outlined,
                 onPressed: () {
                   // // Navigator.push(
                   // //   context,

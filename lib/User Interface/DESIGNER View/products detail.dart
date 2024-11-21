@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../Models/photographer.dart';
 import '../../Reusable/Button.dart';
 import '../../Reusable/Custom Small Button.dart';
 import '../../Reusable/app_colors.dart';
 import '../../Reusable/Fonts.dart';
+import '../../Reusable/app_images.dart';
 import 'Add product 2.dart';
 import 'Edit_Product.dart';
 import 'HOME.dart';
+import 'PhotographerProfileScreen.dart';
 
 class Productdetails1 extends StatelessWidget {
   final String? productId;
@@ -94,40 +98,53 @@ class Productdetails1 extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: 72.h,
+                    width: 430.w,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'P R O D U C T  D E T A I L S',
+                          style: tSStyleBlack18400,
+                        ),
+                        SvgPicture.asset(
+                          AppImages.line,
+                          color: AppColors.text1,
+                        ),
+                      ],
+                    ),
+                  ),
                   Center(
                     child: Container(
                       height: 400.h,
-                      width: 300.w,
+                      width: double.infinity,
                       child: product['images'] != null &&
-                              product['images'].isNotEmpty
+                          product['images'].isNotEmpty
                           ? Image.network(
-                              product['images'][0]) // Display product image
+                          product['images'][0]) // Display product image
                           : Icon(Icons.image_not_supported,
-                              size: 100), // Placeholder
+                          size: 100), // Placeholder
                     ),
                   ),
                   SizedBox(height: 20.h),
                   Text('${product['name']} [${product['category']}]',
-                      style: tSStyleBlack18400),
+                      style: tSStyleBlack16600),
                   SizedBox(height: 10.h),
                   Text(
                     product['description'] ?? 'No description available.',
-                    style: tSStyleBlack18400.copyWith(
-                      fontSize: 14.sp,
-                      color: AppColors.grey4,
-                    ),
+                    style: tSStyleBlack16400.copyWith(color: AppColors.text1),
+                    textAlign: TextAlign.justify,
                   ),
                   SizedBox(height: 10.h),
                   //price
                   Text(
                     product['price'] ?? 'No price available.',
-                    style: tSStyleBlack18400.copyWith(
-                      fontSize: 20.sp,
-                      color: AppColors.secondary,
-                    ),
+                    style: tSStyleBlack20400.copyWith(
+                        color: AppColors.secondary),
                   ),
                   SizedBox(height: 10.h),
-
                   Row(
                     children: [
                       Text('Color',
@@ -173,7 +190,7 @@ class Productdetails1 extends StatelessWidget {
                   ),
                   SizedBox(height: 20.h),
 
-// in this i want to fetch the data from firebase which is insidee the product subcollection photographers
+                  // Fetch photographers dynamically
                   FutureBuilder<List<Map<String, dynamic>>>(
                     future: fetchPhotographers(),
                     builder: (context, photographersSnapshot) {
@@ -185,7 +202,8 @@ class Productdetails1 extends StatelessWidget {
                       if (photographersSnapshot.hasError) {
                         return Center(
                             child: Text(
-                                'Error fetching photographers: ${photographersSnapshot.error}'));
+                                'Error fetching photographers: ${photographersSnapshot
+                                    .error}'));
                       }
 
                       List<Map<String, dynamic>> photographers =
@@ -201,47 +219,54 @@ class Productdetails1 extends StatelessWidget {
                         );
                       }
 
-                      return Column(
-                        children: photographers.map((photographer) {
-                          return Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 20.w,
-                                backgroundImage: NetworkImage(
-                                    photographer['imageUrl'] ??
-                                        'https://via.placeholder.com/150'),
-                              ),
-                              SizedBox(width: 10.w),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: photographers.map((photographer) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 10.h),
+                              // Optional padding between photographer rows
+                              child: Row(
                                 children: [
-                                  Row(
+                                  CircleAvatar(
+                                    radius: 20.w,
+                                    backgroundImage: NetworkImage(
+                                        photographer['imageUrl'] ??
+                                            'https://via.placeholder.com/150'),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
                                     children: [
-                                      Text("PHOTOGRAPHER NAME: ",
-                                          style: tSStyleBlack18400.copyWith(
-                                              fontSize: 16.sp)),
-                                      Text(
-                                        photographer['name'] ??
-                                            'No Photographer Name',
-                                        style: tSStyleBlack18400.copyWith(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold),
+                                      Row(
+                                        children: [
+                                          Text("PHOTOGRAPHER NAME: ",
+                                              style: tSStyleBlack18400.copyWith(
+                                                  fontSize: 16.sp)),
+                                          Text(
+                                            photographer['name'] ??
+                                                'No Photographer Name',
+                                            style: tSStyleBlack18400.copyWith(
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 5.h),
+                                      CustomSmallButton(
+                                        text: 'VIEW',
+                                        onPressed: () {
+                                          // showPhotographerBottomSheet(
+                                          //     context, photographer);
+                                        },
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 5.h),
-                                  CustomSmallButton(
-                                    text: 'Edit',
-                                    icon: Icons.arrow_forward_outlined,
-                                    onPressed: () {
-                                      // Navigate or perform an action
-                                    },
-                                  ),
                                 ],
                               ),
-                            ],
-                          );
-                        }).toList(),
+                            );
+                          }).toList(),
+                        ),
                       );
                     },
                   ),
@@ -267,4 +292,25 @@ class Productdetails1 extends StatelessWidget {
       ),
     );
   }
+
+// void showPhotographerBottomSheet(BuildContext context, Map<String, dynamic> photographer) {
+//   showModalBottomSheet(
+//     context: context,
+//     isScrollControlled: true, // Allows the bottom sheet to expand based on content size
+//     builder: (BuildContext context) {
+//       // Extract data from photographer
+//       String name = photographer['name'] ?? 'Unknown';
+//       String imageUrl = photographer['imageUrl'] ?? 'https://via.placeholder.com/150';
+//       String about = photographer['about'] ?? 'No information available.';
+//       return PhotographerProfileScreen(
+//         photographer: PhotographerModel(
+//           name: name,
+//           imageUrl: imageUrl, // Assumes 'images' is a list
+//           about: about, email: 'email', phone: 'phone', socialLinks: 'socialLinks',
+//         ),
+//       );
+//     },
+//   );
+// }
 }
+

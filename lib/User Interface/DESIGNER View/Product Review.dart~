@@ -202,8 +202,7 @@ class ProductReviewScreen extends StatelessWidget {
                         );
                       }, child: Text('DONE',style: TextStyle(
                         color: AppColors.secondary,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold
+                        fontSize: 18.sp
                   ),))),
                   SizedBox(height: 150.h),
                 ],

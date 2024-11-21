@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../Reusable/Combined Text+icon.dart';
 import '../../Reusable/Dropdownfield.dart';
 import '../../Reusable/Fonts.dart';
+import '../../Reusable/Reusable button icon.dart';
 import '../../Reusable/Text Button.dart';
 import '../../Reusable/app_colors.dart';
 import '../../Reusable/customText field.dart';
@@ -96,7 +97,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.secondary,
             ),
-            child: const Text('Delete'),
+            child:  Text('Delete'),
           ),
         ],
       ),
@@ -152,15 +153,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
               SizedBox(height: 30.h),
               CombinedTextWithLineWidget(text: 'Edit Product'),
               SizedBox(height: 40.h),
-              Center(
-                child: Container(
-                  height: 400.h,
-                  width: 300.w,
-                  child: _productImageUrl.isNotEmpty
-                      ? Image.network(_productImageUrl, fit: BoxFit.cover)
-                      : Image.asset('assets/Images/product1.png'),
-                ),
-              ),
+              // Center(
+              //   child: Container(
+              //     height: 400.h,
+              //     width: 300.w,
+              //     child: product['images'] != null && product['images'].isNotEmpty
+              //         ? Image.network(product['images'][0]) // Display product image
+              //         : Icon(Icons.image_not_supported, size: 100),
+              //   ),
+              // ),
               SizedBox(height: 20.h),
               CustomDropdownField(
                 controller: _categoryController,
@@ -170,33 +171,30 @@ class _EditProductScreenState extends State<EditProductScreen> {
               SizedBox(height: 15.h),
               CustomTextField(
                 controller: _nameController,
-                label: 'Dress Title',
-                labelText: 'Dress Title',
+                labelText: 'Dress Title', hintText: 'Title',
               ),
               CustomTextField(
                 controller: _priceController,
-                label: 'Price',
-                labelText: 'Price',
+                labelText: 'Price', hintText: 'Price',
               ),
               CustomDescriptionTextField(
                 controller: _descriptionController,
                 maxLines: 10,
-                minLines: 1,
+                minLines: 5,
                 labelText: 'Description',
                 hintText: 'Type here',
               ),
               SizedBox(height: 10.h),
               CustomTextField(
                 controller: _quantityController,
-                label: 'Minimum Order Quantity',
-                labelText: 'Minimum Order Quantity',
+                labelText: 'Minimum Order Quantity', hintText: 'Quantity',
               ),
-              ReusableTextButton(
+              ReusableTextButton2(
                 onPressed: () {
                   // Validation and update logic
                 },
                 backgroundColor: AppColors.secondary,
-                icon: Icons.arrow_forward_outlined,
+                //icon: Icons.arrow_forward_outlined,
                 buttonText: 'UPDATE',
                 textStyle: const TextStyle(
                   fontFamily: 'Quicksand',
@@ -205,12 +203,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 ),
               ),
               SizedBox(height: 10.h),
-              ReusableTextButton(
+              ReusableTextButton2(
                 onPressed: () {
                   _showDeleteConfirmationDialog(context);
                 },
-                backgroundColor: AppColors.greylight,
-                buttonText: 'DELETE',
+                backgroundColor: AppColors.red,
+                buttonText: 'DELETE PRODUCT',
                 textStyle: const TextStyle(
                   fontFamily: 'Quicksand',
                   fontSize: 18.0,

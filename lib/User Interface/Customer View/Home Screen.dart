@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,11 +7,13 @@ import '../../Reusable/Customer bottom bar.dart';
 import '../../Reusable/Fonts.dart';
 import '../../Reusable/Product Card.dart';
 import '../../Reusable/app_colors.dart';
+import '../../Reusable/mere reusable.dart';
 import '../DESIGNER View/Product Review.dart';
+import '../DESIGNER View/products detail.dart';
 import 'Customer Notification Screen.dart';
 import 'Customer SMS screen.dart';
 import 'Customer Profile Screen.dart';
-import 'Event_sheet.dart'; // Ensure this is the correct path for EventSearchScreen
+import 'Event_sheet.dart';
 import 'Logout Screen.dart';
 import 'Product Detail Screen.dart';
 import 'Scan Barcode.dart';
@@ -21,15 +24,20 @@ class CustomerHomeScreen extends StatefulWidget {
 }
 
 class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
-  final List<Map<String, String>> products = [
-    {'title': '21WN Reversible Ring', 'image': 'assets/Images/splash.png'},
-    {'title': '21WN Reversible Ring', 'image': 'assets/Images/splash1.png'},
-    {'title': '21WN Reversible Ring', 'image': 'assets/Images/splash2.png'},
-    {'title': '21WN Reversible Ring', 'image': 'assets/images/product4.png'},
-  ];
-
   final PageController _pageController = PageController();
   int _selectedIndex = 0;
+
+  Future<List<Map<String, dynamic>>> fetchProducts() async {
+    try {
+      QuerySnapshot snapshot =
+      await FirebaseFirestore.instance.collection('products').get();
+      return snapshot.docs.map((doc) {
+        return doc.data() as Map<String, dynamic>;
+      }).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch products: $e');
+    }
+  }
 
   void _onPageChanged(int index) {
     setState(() {
@@ -46,39 +54,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.white,
-        appBar: AppBar(
-          title: Column(
-            children: [
-              Text(
-                'LOOK',
-                style: aStyleBlack14400.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 70.0),
-                child: Text(
-                  'BOOK',
-                  style: aStyleBlack14400.copyWith(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: SvgPicture.asset('assets/Icons/Menu.svg'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AboutScreen()),
-              );
-            },
-          ),
-        ),
+        appBar: _buildAppBar(),
         body: PageView(
           controller: _pageController,
           onPageChanged: _onPageChanged,
@@ -107,6 +83,43 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
     );
   }
 
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      title: Column(
+        children: [
+          Text(
+            'LOOK',
+            style: aStyleBlack14400.copyWith(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 70.0),
+            child: Text(
+              'BOOK',
+              style: aStyleBlack14400.copyWith(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+      centerTitle: true,
+      leading: IconButton(
+        icon: SvgPicture.asset('assets/Icons/Menu.svg'),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AboutScreen()),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildHomeContent() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
@@ -115,190 +128,213 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 20.h),
-            Container(
-              height: 50.h,
-              width: double.infinity,
-              child: TextField(
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
-                  suffixIcon: GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => EventSearchScreen(),
-                      );
-                    },
-                    child: SvgPicture.asset('assets/Icons/SearchMenu.svg'),
-                  ),
-                  suffixIconConstraints: BoxConstraints(minHeight: 20.h, minWidth: 70.h),
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(color: Colors.transparent),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            CombinedTextWithLineWidget(text: 'TEAR SHOW', fontSize: 15),
+            _buildSearchBar(),
             SizedBox(height: 20.h),
-            GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              primary: false,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 15.w,
-                mainAxisSpacing: 15.h,
-                childAspectRatio: 0.75,
-              ),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CustomerReviewScreen(),
-                      ),
-                    );
-                  },
-                  child: ProductCardWidget(
-                    title: products[index]['title']!,
-                    subtitle: 'Cardigan',
-                    price: '\$120', imageUrl: '',
+            _buildProductGrid(),
+            SizedBox(height: 20.h),
+            _buildMissionSection(),
+            SizedBox(height: 20.h),
+            _buildFooter(),
+            _buildFooterBar(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      height: 50.h,
+      width: double.infinity,
+      child: TextField(
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+          suffixIcon: GestureDetector(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) => EventSearchScreen(),
+              );
+            },
+            child: SvgPicture.asset('assets/Icons/SearchMenu.svg'),
+          ),
+          suffixIconConstraints: BoxConstraints(minHeight: 20.h, minWidth: 70.h),
+          prefixIcon: Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductGrid() {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: fetchProducts(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Failed to load products.'),
+                ElevatedButton(
+                  onPressed: () => setState(() {}),
+                  child: Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Text(
+              'NO PRODUCTS TO SHOW',
+              style: tSStyleBlack16400,
+            ),
+          );
+        }
+
+        List<Map<String, dynamic>> products = snapshot.data!;
+        return GridView.builder(
+          padding: EdgeInsets.symmetric(vertical: 10.h),
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10.w,
+            mainAxisSpacing: 5.h,
+            childAspectRatio: 0.60,
+          ),
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            String imagePath = (products[index]['images'] as List?)?.first ?? 'No image';
+            return ProductCard2(
+              imagePath: imagePath,
+              title: products[index]['name'] ?? 'No Title',
+              subtitle: products[index]['description'] ?? 'No Description',
+              price: '\$${products[index]['price'] ?? '0'}',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Productdetails1(
+                      productId: products[index]['productId'] ?? 'no product ID',
+                    ),
                   ),
                 );
               },
+              imageUrl: imagePath,
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMissionSection() {
+    return Container(
+      width: double.infinity,
+      height: 296.h,
+      decoration: BoxDecoration(color: AppColors.primaryColor),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(right: 50.w),
+            child: Text(
+              'LOOK',
+              style: aStyleBlack18600.copyWith(color: Colors.white),
             ),
-            SizedBox(height: 20.h),
-            Container(
-              width: double.infinity,
-              height: 296.h,
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 50.w),
-                    child: Text(
-                      'LOOK',
-                      style: aStyleBlack18600.copyWith(color: Colors.white),
-                    ),
-                  ),
-                  Text(
-                    'BOOK',
-                    style: aStyleBlack18600.copyWith(color: Colors.white),
-                  ),
-                  SizedBox(height: 15.h),
-                  SizedBox(
-                    height: 74.h,
-                    width: 323.w,
-                    child: Text(
-                      'Making a luxurious lifestyle accessible for a generous group of women is our daily drive.',
-                      style: tSStyleBlack16400.copyWith(color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  SvgPicture.asset(
-                    'assets/Icons/line.svg',
-                    color: AppColors.white,
-                  ),
-                  SizedBox(height: 20.h),
-                  SvgPicture.asset(
-                    'assets/Icons/Signature.svg',
-                    width: 150.w,
-                    height: 45.h,
-                    color: AppColors.white,
-                  )
-                ],
-              ),
+          ),
+          Text(
+            'BOOK',
+            style: aStyleBlack18600.copyWith(color: Colors.white),
+          ),
+          SizedBox(height: 15.h),
+          SizedBox(
+            height: 74.h,
+            width: 323.w,
+            child: Text(
+              'Making a luxurious lifestyle accessible for a generous group of women is our daily drive.',
+              style: tSStyleBlack16400.copyWith(color: Colors.white),
+              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20.h),
-            Container(
-              width: double.infinity,
-              height: 320.h,
-              decoration: BoxDecoration(
-                color: AppColors.white,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/Icons/twitter.svg',
-                        width: 150.w,
-                        height: 45.h,
-                      ),
-                      SizedBox(width: 30.h),
-                      SvgPicture.asset(
-                        'assets/Icons/Instagram.svg',
-                        width: 150.w,
-                        height: 45.h,
-                      ),
-                      SizedBox(width: 30.h),
-                      SvgPicture.asset(
-                        'assets/Icons/youtube.svg',
-                        width: 150.w,
-                        height: 45.h,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
-                  SvgPicture.asset(
-                    'assets/Icons/line.svg',
-                    color: AppColors.black,
-                  ),
-                  SizedBox(height: 20.h),
-                  Text("support@fashionstore", style: tSStyleBlack16400),
-                  SizedBox(height: 20.h),
-                  Text("+1 234 567 890", style: tSStyleBlack16400),
-                  SizedBox(height: 20.h),
-                  Text("08:00 - 20:00 - Everyday", style: tSStyleBlack16400),
-                  SizedBox(height: 20.h),
-                  SvgPicture.asset(
-                    'assets/Icons/line.svg',
-                    color: AppColors.black,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                          onPressed: () {},
-                          child: Text('About', style: tSStyleBlack16400)),
-                      SizedBox(width: 30.w),
-                      TextButton(
-                          onPressed: () {},
-                          child: Text('Contact', style: tSStyleBlack16400)),
-                      SizedBox(width: 30.w),
-                      TextButton(
-                          onPressed: () {},
-                          child: Text('Blog', style: tSStyleBlack16400)),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 50.h,
-              color: AppColors.greylight,
-              child: Center(
-                child: Text(
-                  'Designed by Fashionstore',
-                  style: tSStyleBlack16400.copyWith(color: Colors.black),
-                ),
-              ),
-            )
-          ],
-        ),
+          ),
+          SizedBox(height: 20.h),
+          SvgPicture.asset('assets/Icons/line.svg', color: AppColors.white),
+          SizedBox(height: 20.h),
+          SvgPicture.asset('assets/Icons/Signature.svg', width: 150.w, height: 45.h, color: AppColors.white),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      width: double.infinity,
+      height: 320.h,
+      decoration: BoxDecoration(color: AppColors.white),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset('assets/Icons/twitter.svg', width: 150.w, height: 45.h),
+              SizedBox(width: 30.h),
+              SvgPicture.asset('assets/Icons/Instagram.svg', width: 150.w, height: 45.h),
+              SizedBox(width: 30.h),
+              SvgPicture.asset('assets/Icons/youtube.svg', width: 150.w, height: 45.h),
+            ],
+          ),
+          SizedBox(height: 20.h),
+          SvgPicture.asset('assets/Icons/line.svg', color: AppColors.black),
+          SizedBox(height: 20.h),
+          Text("support@fashionstore", style: tSStyleBlack16400),
+          SizedBox(height: 20.h),
+          Text("+1 234 567 890", style: tSStyleBlack16400),
+          SizedBox(height: 20.h),
+          Text(
+            "Fashion Store @2024. All Rights Reserved.",
+            style: tSStyleBlack16400,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooterBar() {
+    return Container(
+      height: 64.h,
+      width: double.infinity,
+      color: AppColors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'About',
+            style: tSStyleBlack16400.copyWith(color: Colors.black),
+          ),
+          SizedBox(width: 50.w),
+          Text(
+            'Contact',
+            style: tSStyleBlack16400.copyWith(color: Colors.black),
+          ),
+          SizedBox(width: 50.w),
+          Text(
+            'Blog',
+            style: tSStyleBlack16400.copyWith(color: Colors.black),
+          ),
+        ],
       ),
     );
   }

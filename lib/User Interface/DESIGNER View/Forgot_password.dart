@@ -73,8 +73,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             controller: emailController,
             labelText: "Email",
             obscureText: false,
-            suffixIcon: Icon(Icons.email, color: Colors.grey),
-            label: '',
+            suffixIcon: Icon(Icons.email, color: Colors.grey), hintText: 'Email',
+
           ),
           ErrorMessage(errorText: _errorMessage),
           SizedBox(height: screenHeight * 0.02),

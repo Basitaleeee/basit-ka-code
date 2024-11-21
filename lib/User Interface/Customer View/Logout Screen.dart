@@ -13,7 +13,9 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () {
@@ -48,14 +50,12 @@ class AboutScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // About section
             Text(
               "About Fashion Concierge",
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.secondary // Customize to your app's color scheme
-              ),
+                  color: AppColors.secondary),
             ),
             SizedBox(height: 10),
             Text(
@@ -64,29 +64,24 @@ class AboutScreen extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
-            // Language selection dropdown
             CustomDropdownField(
               controller: _categoryController,
               labelText: "Select Language",
               items: ['English', 'Spanish', 'French'],
             ),
             Spacer(),
-            // Logout button
             ElevatedButton(
               onPressed: () async {
                 try {
-                  // Clear user data from SharedPreferences
                   SharedPreferences prefs = await SharedPreferences.getInstance();
                   await prefs.clear();
 
-                  // Sign out from Firebase
                   await FirebaseAuth.instance.signOut();
 
-                  // Navigate back to the Welcome screen
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => Welcome()),
-                        (route) => false, // Remove all routes in the stack
+                        (route) => false,
                   );
                 } catch (e) {
                   print('Logout Error: ${e.toString()}');
@@ -96,7 +91,7 @@ class AboutScreen extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondary, // Customize to your app's color scheme
+                backgroundColor: AppColors.secondary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -106,8 +101,6 @@ class AboutScreen extends StatelessWidget {
                 style: tSStyleBlack18400.copyWith(color: Colors.white),
               ),
             ),
-
-
           ],
         ),
       ),

@@ -7,32 +7,36 @@ import 'app_colors.dart';
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
-  final bool? obscureText; // Nullable obscureText
+  final String hintText;
+  final bool obscureText; // Default false for password-like input
   final Icon? suffixIcon;
-  CustomTextField({
+
+  const CustomTextField({
     Key? key,
     required this.controller,
     required this.labelText,
+    required this.hintText,
     this.obscureText = false,
-    this.suffixIcon, required String label, bool isPasswordField = false,
+    this.suffixIcon,
   }) : super(key: key);
-
-  get optionalIcon => null;
-
-  get errorText => null;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(labelText, style:tSStyleBlack16400.copyWith(fontSize: 14) ),
+        Text(
+          labelText,
+          style: tSStyleBlack16400.copyWith(fontSize: 14.sp),
+        ),
         SizedBox(height: 8.0),
         TextField(
           controller: controller,
-          obscureText: obscureText ?? false,
+          obscureText: obscureText,
           decoration: InputDecoration(
-            hintStyle: const TextStyle(
+            hintText: controller.text.isEmpty ? hintText : null, // Show hint if empty
+            hintStyle: tSStyleBlack16400.copyWith(
+              fontSize: 14.sp,
               color: AppColors.greylight,
             ),
             filled: true,
@@ -55,25 +59,27 @@ class CustomTextField extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(50.r),
             ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: AppColors.greylight,
-                width: 1.0,
-              ),
-              borderRadius: BorderRadius.circular(50.r),
-            ),
             errorBorder: OutlineInputBorder(
               borderSide: const BorderSide(
-                color: AppColors.greylight,
+                color: Colors.red,
                 width: 1.0,
               ),
               borderRadius: BorderRadius.circular(50.r),
             ),
-            errorText: errorText,
-          suffixIcon: optionalIcon != null
-              ? Icon(optionalIcon, color: AppColors.greylight)
-              : suffixIcon,
-          ),        ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: Colors.red,
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(50.r),
+            ),
+            suffixIcon: suffixIcon,
+          ),
+          onChanged: (_) {
+            // Rebuild UI to update hint visibility when typing
+            (context as Element).markNeedsBuild();
+          },
+        ),
         SizedBox(height: 16.0),
       ],
     );

@@ -69,9 +69,9 @@ class _SocialLinksScreenState extends State<SocialLinksScreen> {
           CustomTextField(
             controller: instagramController,
             labelText: "Instagram",
-            obscureText: false,
+            obscureText: false, hintText: 'Instagram',
            // suffixIcon: Icon(Icons.link, color: Colors.grey),
-            label: '',
+
           ),
           SizedBox(height: screenHeight * 0.02),
           CustomTextField(
@@ -79,7 +79,7 @@ class _SocialLinksScreenState extends State<SocialLinksScreen> {
             labelText: "LinkedIn",
             obscureText: false,
             //suffixIcon: Icon(),
-            label: 'Link',
+             hintText: 'LinkedIN',
           ),
           ErrorMessage(errorText: _errorMessage),
           SizedBox(height: screenHeight * 0.02),

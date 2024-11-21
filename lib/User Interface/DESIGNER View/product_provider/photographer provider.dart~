@@ -7,8 +7,8 @@ import 'dart:io';
 import '../../../Models/photographer.dart';
 
 class PhotographerProvider extends ChangeNotifier {
-  final List<PhotographerModel> _photographers = [];
-  List<PhotographerModel> get photographers => _photographers;
+  final List<AddPhotographerModel> _photographers = [];
+  List<AddPhotographerModel> get photographers => _photographers;
   String? imageUrl;
 
   // Fetch photographers from Firestore
@@ -22,7 +22,7 @@ class PhotographerProvider extends ChangeNotifier {
 
       _photographers.clear();
       for (var doc in snapshot.docs) {
-        _photographers.add(PhotographerModel.fromMap(doc.data()));
+        _photographers.add(AddPhotographerModel.fromMap(doc.data()));
       }
       notifyListeners();
     } catch (e) {
@@ -31,7 +31,7 @@ class PhotographerProvider extends ChangeNotifier {
   }
 
   // Add a new photographer
-  Future<void> addPhotographer(String productId, PhotographerModel photographer) async {
+  Future<void> addPhotographer(String productId, AddPhotographerModel photographer) async {
     try {
       await FirebaseFirestore.instance
           .collection('products')

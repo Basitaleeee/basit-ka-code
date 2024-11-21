@@ -6,6 +6,7 @@ class PhotographerModel {
   final String phone;
   final String socialLinks;
   final String imageUrl;
+  final String about; // Added about field
 
   PhotographerModel({
     required this.name,
@@ -13,6 +14,7 @@ class PhotographerModel {
     required this.phone,
     required this.socialLinks,
     required this.imageUrl,
+    required this.about, // Added about parameter
   });
 
   // Convert from map (Firestore data) to PhotographerModel
@@ -23,6 +25,7 @@ class PhotographerModel {
       phone: map['phone'] ?? '',
       socialLinks: map['socialLinks'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
+      about: map['about'] ?? '', // Fetching about field
     );
   }
 
@@ -34,6 +37,7 @@ class PhotographerModel {
       'phone': phone,
       'socialLinks': socialLinks,
       'imageUrl': imageUrl,
+      'about': about, // Saving about field
     };
   }
 
@@ -46,6 +50,7 @@ class PhotographerModel {
       phone: data['phone'] ?? '',
       socialLinks: data['socialLinks'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
+      about: data['about'] ?? '', // Fetching about field
     );
   }
 }

@@ -196,7 +196,7 @@ class Lookbook1state extends State<Lookbook1> {
                 onLinkTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Rolescreen()), // Replace with actual screen
+                    MaterialPageRoute(builder: (context) => CreateWithScreen()), // Replace with actual screen
                   );
                 },
                 titleStyle: aStyleBlack32400.copyWith(
@@ -213,8 +213,8 @@ class Lookbook1state extends State<Lookbook1> {
                       controller: emailController,
                       labelText: "Email",
                       obscureText: false,
-                      suffixIcon: null,
-                      label: '',
+                      suffixIcon: null, hintText: 'Email',
+
                     ),
                     CustomTextField(
                       controller: passwordController,
@@ -224,8 +224,7 @@ class Lookbook1state extends State<Lookbook1> {
                         _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                         color: AppColors.primaryColor,
                         size: 20,
-                      ),
-                      label: '',
+                      ), hintText: 'Password',
                     ),
                     ErrorMessage(errorText: _errorMessage),
                     RoundedButton(

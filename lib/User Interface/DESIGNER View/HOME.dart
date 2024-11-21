@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lookbook/User%20Interface/DESIGNER%20View/products%20detail.dart';
 import '../../Reusable/Bottom Navgation Bar.dart';
 import '../../Reusable/Combined Text+icon.dart';
@@ -8,6 +9,7 @@ import '../../Reusable/Fonts.dart';
 import '../../Reusable/Product Card.dart';
 import '../../Reusable/app_colors.dart';
 import '../../Reusable/mere reusable.dart';
+import '../Customer View/Logout Screen.dart';
 import 'Add product 2.dart';
 import 'Chat Screen.dart';
 import 'Notification Screen.dart';
@@ -28,9 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfileScreen(),
   ];
 
-  // Fetch products from Firebase
+
   Future<List<Map<String, dynamic>>> fetchProducts() async {
-    // Fetching data from Firestore (Assuming you have a 'products' collection)
+
     QuerySnapshot snapshot =
         await FirebaseFirestore.instance.collection('products').get();
     List<Map<String, dynamic>> productsList = snapshot.docs.map((doc) {
@@ -80,9 +82,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: SvgPicture.asset('assets/Icons/Menu.svg'),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AboutScreen()),
+            );
           },
         ),
       ),
@@ -107,39 +112,41 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
 
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No products found'));
+                    return Center(child:  Text(
+                      'NO PRODUCTS TO SHOW',
+                      style: tSStyleBlack16400,
+                    ),);
                   }
 
                   List<Map<String, dynamic>> products = snapshot.data!;
 
                   return GridView.builder(
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      crossAxisSpacing: 15.w,
-                      mainAxisSpacing: 15.h,
-                      childAspectRatio: 0.75,
+                      crossAxisSpacing: 10.w,
+                      mainAxisSpacing: 5.h,
+                      childAspectRatio: 0.60,
                     ),
                     itemCount: products.length,
                     itemBuilder: (context, index) {
-                      return GestureDetector(
+                      return ProductCard2(
+                        imagePath: products[index]['images'][0] ?? 'No image',
+                        title: products[index]['name'] ?? 'No Title',
+                        subtitle: products[index]['description'] ?? 'No Description',
+                        price: '\$${products[index]['price'] ?? '0'}',
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Productdetails1(
-                                productId: products[index]['productId'] ?? 'no product ID',
-                              )
-                            ),
+                                builder: (context) => Productdetails1(
+                                  productId: products[index]
+                                  ['productId'] ??
+                                      'no product ID',
+                                )),
                           );
-                        },
-                        child: ProductCardWidget(
-                          title: products[index]['name'] ?? 'No Title',
-                          subtitle: products[index]['description'] ?? 'No Description',
-                          price: '\$${products[index]['price'] ?? '0'}',
-                          imageUrl: products[index]['images'][0] ?? 'No image',
-                        ),
+                        }, imageUrl: products[index]['images'][0] ?? 'No image',
                       );
-
                     },
                   );
                 },
@@ -148,19 +155,22 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
+      floatingActionButton: SizedBox(
+        width: 71.w,
+        height: 71.h,
+        child: FloatingActionButton(
+    onPressed: () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => AddProductScreen()),
+    );},
+          elevation: 8.0,
+          backgroundColor: AppColors.secondary,
+          shape: const CircleBorder(),
+          child: Icon(Icons.add, color: Colors.white, size: 40.sp),
         ),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddProductScreen()),
-          );
-        },
-        backgroundColor: AppColors.secondary,
-        child: Icon(Icons.add, color: Colors.white, size: 30.sp),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: MyCustomBottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onTabTapped,

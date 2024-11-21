@@ -48,6 +48,7 @@ class AddProductScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Column(
           children: [
             Text(
@@ -121,19 +122,17 @@ class AddProductScreen extends StatelessWidget {
               SizedBox(height: 15.h),
               CustomTextField(
                 controller: _nameController,
-                label: 'Dress Title',
-                labelText: 'Dress Title',
+                labelText: 'Dress Title', hintText: 'Title',
               ),
               CustomTextField(
                 controller: _priceController,
-                label: 'Price',
-                labelText: 'Price',
+                labelText: 'Price', hintText: 'Price (₹)',
               ),
               CustomDescriptionTextField(
                 controller: _descriptionController,
                 maxLines: 10,
-                minLines: 1,
-                labelText: 'Description',
+                minLines: 5,
+                labelText: 'Product Description',
                 hintText: 'Type here',
               ),
               Text('Colors', style: tSStyleBlack18400.copyWith()),
@@ -145,8 +144,7 @@ class AddProductScreen extends StatelessWidget {
               SizedBox(height: 10.h),
               CustomTextField(
                 controller: _quantityController,
-                label: 'Minimum Order Quantity',
-                labelText: 'Minimum Order Quantity',
+                labelText: 'Minimum Order Quantity', hintText: 'Quantity',
               ),
               Row(
                 children: [
@@ -162,13 +160,11 @@ class AddProductScreen extends StatelessWidget {
               SizedBox(height: 10.h),
               CustomTextField(
                 controller: _barcodeController,
-                label: 'Barcode',
-                labelText: 'Barcode',
+                labelText: 'Barcode', hintText: '222-ABCS-1234',
               ),
               CustomTextField(
                 controller: _eventController,
-                label: 'Event',
-                labelText: 'Event',
+                labelText: 'Event', hintText: 'Event',
               ),
               Text('Event Date', style: tSStyleBlack18400.copyWith(fontSize: 15.sp)),
               SizedBox(height: 10.h),

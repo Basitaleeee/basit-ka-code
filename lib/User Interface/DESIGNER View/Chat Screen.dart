@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../Models/chatmodel.dart';
 import '../../Reusable/Bottom Navgation Bar.dart';
 import '../../Reusable/Combined Text+icon.dart';
 import '../../Reusable/Fonts.dart';
 import '../../Reusable/app_colors.dart';
+import '../../services/chat_service.dart';
 import 'HOME.dart';
 import 'Messaging.dart';
 import 'Notification Screen.dart';
 import 'Profile Screen.dart';
-
 class ChatScreen extends StatefulWidget {
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -18,14 +20,7 @@ class _ChatScreenState extends State<ChatScreen> {
   int _selectedIndex = 1;
   String _searchQuery = ''; // To hold the search query
   final TextEditingController _searchController = TextEditingController();
-
-  // Sample chat data
-  final List<Map<String, String>> chats = [
-    {'name': 'KASHAN ASHRAF', 'message': 'KIDR HA ?', 'time': '10:00 AM'},
-    {'name': 'HUZAIFA BHAI', 'message': 'ACHA KAM HAI!', 'time': '10:15 AM'},
-    {'name': 'SUBHAN SAAB', 'message': 'SIGMA HAI TU TO ', 'time': '11:00 AM'},
-    {'name': 'FARHAN RAJA', 'message': 'CHALA JA !', 'time': '11:30 AM'},
-  ];
+  final ChatService _chatService = ChatService(); // Chat service instance
 
   final List<Widget> _screens = [
     HomeScreen(),
@@ -46,14 +41,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Filter chats based on the search query
-    final filteredChats = chats.where((chat) {
-      return chat['name']!.toLowerCase().contains(_searchQuery.toLowerCase());
-    }).toList();
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Column(
           children: [
             Text(
@@ -115,33 +106,47 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             SizedBox(height: 20.h),
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredChats.length, // Use filtered chats
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: CircleAvatar(
-                      radius: 25.r,
-                      backgroundImage: AssetImage('assets/Images/splash.png'),
-                    ),
-                    title: Text(
-                      filteredChats[index]['name']!,
-                      style: tSStyleBlack16400.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(filteredChats[index]['message']!),
-                    trailing: Text(
-                      filteredChats[index]['time']!,
-                      style: TextStyle(color: Colors.grey, fontSize: 12.sp),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatDetailScreen(
-                            contactName: filteredChats[index]['name']!,
+              child: StreamBuilder<List<Chat>>(
+                stream: _chatService.getChats('designerId'), // Pass designerId here
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  // Filter chats based on the search query
+                  final filteredChats = snapshot.data!.where((chat) {
+                    return chat.name.toLowerCase().contains(_searchQuery.toLowerCase());
+                  }).toList();
+
+                  return ListView.builder(
+                    itemCount: filteredChats.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                          radius: 25.r,
+                          backgroundImage: AssetImage('assets/Images/splash.png'),
+                        ),
+                        title: Text(
+                          filteredChats[index].name,
+                          style: tSStyleBlack16400.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
+                        subtitle: Text(filteredChats[index].message),
+                        trailing: Text(
+                          filteredChats[index].time,
+                          style: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatDetailScreen(
+                                contactName: filteredChats[index].name,
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
                   );
@@ -151,7 +156,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: MyCustomBottomNavigationBar( // Use the reusable bottom navigation bar
+      bottomNavigationBar: MyCustomBottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onTabTapped,
       ),

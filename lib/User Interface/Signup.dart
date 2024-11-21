@@ -7,8 +7,8 @@ import '../Reusable/app_colors.dart';
 import '../Reusable/reusable Text.dart';
 import '../reusable/Text Button.dart';
 import '../reusable/customText field.dart';
+import 'Customer View/Home Screen.dart';
 import 'DESIGNER View/Add product1 .dart';
-
 class Signup2 extends StatefulWidget {
   final String role;
 
@@ -56,12 +56,22 @@ class _Signup2State extends State<Signup2> {
         'email': _emailController.text.trim(),
         'phone': _phoneController.text.trim(),
         'role': widget.role.toUpperCase(),
+        'imageUrl': '',
+        'userId': userId,
       });
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => FirstScreen()),
-      );
+      // Navigate based on the role
+      if (widget.role.toLowerCase() == 'designer') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => FirstScreen()), // Navigate to Designer's First Screen
+        );
+      } else if (widget.role.toLowerCase() == 'customer') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => CustomerHomeScreen()), // Navigate to Customer's Home Screen
+        );
+      }
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -107,51 +117,44 @@ class _Signup2State extends State<Signup2> {
                 child: Column(
                   children: [
                     CustomTextField(
-                      label: "Full Name",
                       controller: _fullNameController,
                       obscureText: false,
-                      suffixIcon: null, labelText: 'Full Name',
+                      suffixIcon: null, labelText: 'Full Name', hintText: 'Full Name ',
                     ),
-
                     CustomTextField(
-                      label: "Email",
                       controller: _emailController,
                       labelText: 'Email',
                       obscureText: false,
-                      suffixIcon: null,
+                      suffixIcon: null, hintText: 'basit@gmail.com',
                     ),
                     CustomTextField(
-                      label: "Phone Number",
                       controller: _phoneController,
                       labelText: 'Phone Number',
                       obscureText: false,
-                      suffixIcon: null,
+                      suffixIcon: null, hintText: '0304-1234567',
                     ),
                     CustomTextField(
-                      label: "Password",
                       controller: _passwordController,
                       obscureText: true,
                       suffixIcon: Icon(Icons.visibility),
-                      labelText: 'Password',
+                      labelText: 'Password', hintText: 'Password',
                     ),
                     CustomTextField(
-                      label: "Confirm Password",
                       controller: _confirmPasswordController,
                       obscureText: true,
                       suffixIcon: Icon(Icons.visibility),
-                      labelText: 'Confirm Password',
+                      labelText: 'Confirm Password', hintText: 'Confirm Password',
                     ),
                     SizedBox(height: screenHeight * 0.03), // Responsive spacing
                     ReusableTextButton(
                       buttonText: "SIGNUP NOW!",
                       onPressed: _signUp,
-                      backgroundColor: AppColors.secondary,
+                      color: AppColors.secondary,
                       icon: Icons.arrow_forward,
                     ),
                   ],
                 ),
               )
-
             ],
           ),
         ),

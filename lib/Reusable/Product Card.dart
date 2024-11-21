@@ -23,66 +23,76 @@ class ProductCardWidget extends StatelessWidget {
       margin: EdgeInsets.zero,
       color: Colors.white,
       elevation: 0.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            height: 150.h,
-            width: 180.w,
-            decoration: BoxDecoration(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Image Container
+            Flexible(
+              child: Container(
+                height: 150.h,
+                width: 180.w,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageUrl.isNotEmpty
+                        ? NetworkImage(imageUrl)
+                        : AssetImage('assets/Images/placeholder.png') as ImageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            // Content Container
+            Container(
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10),
                 ),
-              image: DecorationImage(
-                image: imageUrl.isNotEmpty
-                    ? NetworkImage(imageUrl) // Use network image if URL is available
-                    : AssetImage('assets/Images/placeholder.png') as ImageProvider, // Fallback to placeholder
-                fit: BoxFit.cover,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Text(
+                      title,
+                      style: tSStyleBlack16400.copyWith(
+                        fontSize: 13.sp,
+                        color: AppColors.black,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // Subtitle
+                    Text(
+                      subtitle,
+                      style: tSStyleBlack16400.copyWith(
+                        fontSize: 12.sp,
+                        color: AppColors.black,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // Price
+                    Text(
+                      price,
+                      style: tSStyleBlack16400.copyWith(
+                        fontSize: 16.sp,
+                        color: AppColors.secondary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                )
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: tSStyleBlack16400.copyWith(fontSize: 13.sp, color: AppColors.black),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    subtitle,
-                    style: tSStyleBlack16400.copyWith(fontSize: 12.sp, color: AppColors.black),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    price,
-                    style: tSStyleBlack16400.copyWith(fontSize: 16.sp, color: AppColors.secondary),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

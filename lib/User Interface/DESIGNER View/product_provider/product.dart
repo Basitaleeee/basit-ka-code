@@ -8,7 +8,7 @@ class ProductProvider with ChangeNotifier {
   List<File> selectedImages = [];
   List<String> selectedSocialLinks = [];
 
-  Future<void> addProduct(ProductModel product) async {
+  Future<void> addProduct(AddProductModel product) async {
     try {
       // Generate product ID
       String productId = FirebaseFirestore.instance.collection('products').doc().id;

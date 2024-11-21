@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'Fonts.dart';
+import 'app_colors.dart';
 
 class AuthHeader extends StatelessWidget {
   final String title;
@@ -48,17 +49,14 @@ class AuthHeader extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: titleStyle ??
-                    aStyleBlack32400.copyWith(
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.11,
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: aStyleBlack48400.copyWith(
+                  color: AppColors.white,
+                ),
               ),
               SizedBox(height: screenHeight * 0.02),
               Container(
-                height: screenHeight * 0.06,
-                width: screenWidth * 0.75,
+                height: screenHeight * 0.04,
+                // width: screenWidth * 0.75,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(50),
@@ -69,17 +67,15 @@ class AuthHeader extends StatelessWidget {
                     children: [
                       Text(
                         subtitle,
-                        style: subtitleStyle ??
-                            tSStyleBlack18400.copyWith(
-                              color: Colors.white,
-                              fontSize: screenWidth * 0.035,
-                            ),
+                          style: tSStyleBlack16400.copyWith(
+                            color: AppColors.white,
+                          )
                       ), SizedBox(),
                       // const Spacer(),
                       IconButton(
                         onPressed: onLinkTap,
                         icon:  Icon(Icons.arrow_forward_outlined, color: Colors.white,
-                            size: 18.0
+                            size: 16.0
 
                         ),
                         ),

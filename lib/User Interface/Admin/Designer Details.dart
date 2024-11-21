@@ -143,7 +143,6 @@ class DesignerDetailScreen extends StatelessWidget {
               height: 40,
               width: 140,
               text: "REPORT",
-              icon: Icons.arrow_forward_outlined,
               onPressed: () {
                 _showCustomConfirmationDialog(context);
               },

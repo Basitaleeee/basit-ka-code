@@ -8,6 +8,7 @@ import 'User Interface/DESIGNER View/HOME.dart';
 import 'User Interface/DESIGNER View/product_provider/photographer provider.dart';
 import 'User Interface/DESIGNER View/product_provider/product.dart';
 import 'User Interface/DESIGNER View/product_provider/productreviwe notifier.dart';
+import 'User Interface/DESIGNER View/product_provider/social links provider.dart';
 import 'User Interface/Welcome.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,6 +26,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ButtonController()),
         ChangeNotifierProvider(create: (_) => PhotographerProvider()),
         ChangeNotifierProvider(create: (_) => ProductDetailNotifier()),
+        //ChangeNotifierProvider(create: (_) => SocialLinksProvider()),
+
 
 
       ],
