@@ -227,7 +227,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Productdetails1(
+                    builder: (context) => CustomerReviewScreen(
                       productId: products[index]['productId'] ?? 'no product ID',
                     ),
                   ),

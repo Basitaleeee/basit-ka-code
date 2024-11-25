@@ -1,17 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../Models/photographer.dart';
 import '../../Reusable/Button.dart';
 import '../../Reusable/Custom Small Button.dart';
 import '../../Reusable/app_colors.dart';
-import '../../Reusable/Combined Text+icon.dart';
 import '../../Reusable/Fonts.dart';
-import '../../reusable/Text Button.dart';
+import '../../Reusable/app_images.dart';
 
 class CustomerReviewScreen extends StatelessWidget {
-  const CustomerReviewScreen({Key? key}) : super(key: key);
+  final String? productId;
+
+  CustomerReviewScreen({required this.productId});
+
+  Future<Map<String, dynamic>> fetchProductDetails() async {
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productId)
+        .get();
+
+    return snapshot.data() as Map<String, dynamic>;
+  }
+  Future<List<Map<String, dynamic>>> fetchDesigners() async {
+    QuerySnapshot designersSnapshot = await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productId)
+        .collection('designers')
+        .get();
+
+    return designersSnapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
+  }
+
+
+  Future<List<Map<String, dynamic>>> fetchPhotographers() async {
+    QuerySnapshot photographersSnapshot = await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productId)
+        .collection('photographers')
+        .get();
+
+    return photographersSnapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(productId);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -45,178 +83,304 @@ class CustomerReviewScreen extends StatelessWidget {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CombinedTextWithLineWidget(text: 'PRODUCT DETAIL', fontSize: 15),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: fetchProductDetails(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-              SizedBox(height: 20.h),
-              // Static Image
-              Center(
-                child: Container(
-                  height: 400.h,
-                  width: 300.w,
-                  child: Image.asset('assets/Images/product1.png'),
-                ),
-              ),
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-              SizedBox(height: 20.h),
-              Text('Elegant Red Dress [DRESS]', style: tSStyleBlack18400),
+          if (!snapshot.hasData) {
+            return Center(child: Text('No product details found.'));
+          }
 
-              SizedBox(height: 10.h),
-              Text('This is the best one ',
-                  style: tSStyleBlack18400.copyWith(
-                      fontSize: 14.sp, color: AppColors.grey4)), // Static text
+          Map<String, dynamic> product = snapshot.data!;
 
-              SizedBox(height: 20.h),
-
-              // Static Selected Colors
-              Row(
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Color',
-                      style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
-                  SizedBox(width: 10.w),
-                  CircleAvatar(
-                    radius: 10.w,
-                    backgroundColor: Colors.red,
-                  ),
-                  SizedBox(width: 10.w),
-                  CircleAvatar(
-                    radius: 10.w,
-                    backgroundColor: Colors.black, // Static color
-                  ),
-                  SizedBox(width: 50.w),
-                  Text('Size',
-                      style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
-                  SizedBox(width: 10.w),
-                  CircleAvatar(
-                    radius: 10.w,
-                    backgroundColor: AppColors.secondary,
-                    child: Text(
-                      'M', // Static size
-                      style: tSStyleBlack18400.copyWith(fontSize: 12.sp),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20.h),
-              // Static Minimum Order Quantity
-              Row(
-                children: [
-                  Text('Minimum Order Quantity',
-                      style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
-                  SizedBox(width: 10.w),
-                  Text('[ 20 ]',
-                      style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
-                ],
-              ),
-
-              SizedBox(height: 20.h),
-              Container(
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 20.w,
-                      backgroundImage:
-                      NetworkImage('https://picsum.photos/200/300'),
-                    ),
-                    SizedBox(width: 10.w),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                  SizedBox(
+                    height: 72.h,
+                    width: 430.w,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('Photographer NAME [John Doe]',
-                            style: tSStyleBlack18400.copyWith(
-                                fontSize: 16.sp, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 5.h),
-                        CustomSmallButton(
-                          height: 30,
-                          text: 'VIEW',
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
-
+                        Text(
+                          'P R O D U C T  D E T A I L S',
+                          style: tSStyleBlack18400,
+                        ),
+                        SvgPicture.asset(
+                          AppImages.line,
+                          color: AppColors.text1,
+                        ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 20.h),
-              Container(
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 20.w,
-                      backgroundImage:
-                      NetworkImage('https://picsum.photos/200/300'),
+                  ),
+                  Center(
+                    child: Container(
+                      height: 400.h,
+                      width: double.infinity,
+                      child: product['images'] != null &&
+                              product['images'].isNotEmpty
+                          ? Image.network(
+                              product['images'][0]) // Display product image
+                          : Icon(Icons.image_not_supported,
+                              size: 100), // Placeholder
                     ),
-                    SizedBox(width: 10.w),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text('DESIGNER NAME[John Doe]',
+                  ),
+                  SizedBox(height: 20.h),
+                  Text('${product['name']} [${product['category']}]',
+                      style: tSStyleBlack16600),
+                  SizedBox(height: 10.h),
+                  Text(
+                    product['description'] ?? 'No description available.',
+                    style: tSStyleBlack16400.copyWith(color: AppColors.text1),
+                    textAlign: TextAlign.justify,
+                  ),
+                  SizedBox(height: 10.h),
+                  //price
+                  Text(
+                    product['price'] ?? 'No price available.',
+                    style:
+                        tSStyleBlack20400.copyWith(color: AppColors.secondary),
+                  ),
+                  SizedBox(height: 10.h),
+                  Row(
+                    children: [
+                      Text('Color',
+                          style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
+                      SizedBox(width: 10.w),
+                      CircleAvatar(
+                        radius: 10.w,
+                        backgroundColor: AppColors.black,
+                      ),
+                      SizedBox(width: 50.w),
+                      Text('Size',
+                          style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
+                      SizedBox(width: 10.w),
+                      CircleAvatar(
+                        radius: 10.w,
+                        backgroundColor: AppColors.black,
+                        child: Text('M',
                             style: tSStyleBlack18400.copyWith(
-                                fontSize: 16.sp, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 5.h),
-                        CustomSmallButton(
-                          height: 30,
-                          text: 'VIEW',
+                                fontSize: 12.sp, color: Colors.white)),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                  Row(
+                    children: [
+                      Text('Minimum Order Quantity',
+                          style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
+                      SizedBox(width: 10.w),
+                      Text('[ ${product['quantity'] ?? 'N/A'} ]',
+                          style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future: fetchDesigners(),
+                    builder: (context, designersSnapshot) {
+                      if (designersSnapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
 
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
+                      if (designersSnapshot.hasError) {
+                        return Center(child: Text('Error fetching designers: ${designersSnapshot.error}'));
+                      }
 
-                      ],
-                    ),
-                  ],
-                ),
+                      List<Map<String, dynamic>> designers = designersSnapshot.data ?? [];
+
+                      if (designers.isEmpty) {
+                        return Text(
+                          'No designers available.',
+                          style: tSStyleBlack18400.copyWith(
+                            fontSize: 14.sp,
+                            color: AppColors.grey4,
+                          ),
+                        );
+                      }
+
+                      return Column(
+                        children: designers.map((designer) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 10.h),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 20.w,
+                                  backgroundImage: NetworkImage(designer['imageUrl'] ?? 'https://via.placeholder.com/150'),
+                                ),
+                                SizedBox(width: 10.w),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text("DESIGNER NAME: ", style: tSStyleBlack18400.copyWith(fontSize: 16.sp)),
+                                        Text(
+                                          designer['name'] ?? 'No Designer Name',
+                                          style: tSStyleBlack18400.copyWith(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 5.h),
+                                    CustomSmallButton(
+                                      text: 'VIEW',
+                                      onPressed: () {
+                                        // You can navigate to a designer profile screen or show a bottom sheet with details
+                                        // showDesignerBottomSheet(context, designer);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 20.h),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future: fetchPhotographers(),
+                    builder: (context, photographersSnapshot) {
+                      if (photographersSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (photographersSnapshot.hasError) {
+                        return Center(
+                            child: Text(
+                                'Error fetching photographers: ${photographersSnapshot.error}'));
+                      }
+
+                      List<Map<String, dynamic>> photographers =
+                          photographersSnapshot.data ?? [];
+
+                      if (photographers.isEmpty) {
+                        return Text(
+                          'No photographers available.',
+                          style: tSStyleBlack18400.copyWith(
+                            fontSize: 14.sp,
+                            color: AppColors.grey4,
+                          ),
+                        );
+                      }
+
+                      return Column(
+                        children: photographers.map((photographer) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 10.h),
+                            // Optional padding between photographer rows
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 20.w,
+                                  backgroundImage: NetworkImage(
+                                      photographer['imageUrl'] ??
+                                          'https://via.placeholder.com/150'),
+                                ),
+                                SizedBox(width: 10.w),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text("PHOTOGRAPHER NAME: ",
+                                            style: tSStyleBlack18400.copyWith(
+                                                fontSize: 16.sp)),
+                                        Text(
+                                          photographer['name'] ??
+                                              'No Photographer Name',
+                                          style: tSStyleBlack18400.copyWith(
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 5.h),
+                                    CustomSmallButton(
+                                      text: 'VIEW',
+                                      onPressed: () {
+                                        // showPhotographerBottomSheet(
+                                        //     context, photographer);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
+
+                  SizedBox(height: 30.h),
+
+                  RoundedButton(
+                    onPressed: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => AddProductScreen(),
+                      //   ),
+                      // );
+                    },
+                    text: 'REMOVE FROM HOME  ',
+                  ),
+                  SizedBox(height: 20.h),
+                  CustomSmallButton(
+                    color: Colors.red,
+                    height: 50,
+                    width: 50,
+                    text: "Chat",
+                    onPressed: () {
+                      // // Navigator.push(
+                      // //   context,
+                      // //   MaterialPageRoute(
+                      // //     builder: (context) => AddProductScreen(),
+                      // //   ),
+                      // );
+                    },
+                  ),
+                  SizedBox(height: 80.h),
+                ],
               ),
-
-
-              SizedBox(height: 30.h),
-
-              // Custom Buttons
-              RoundedButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => AddProductScreen(),
-                  //   ),
-                  // );
-                },
-                text: 'REMOVE FROM HOME  ',
-              ),
-
-              SizedBox(height: 20.h),
-              CustomSmallButton(
-                color: Colors.red,
-                height: 50,
-                width: 150,
-                text: "REPORT",
-                onPressed: () {
-                  // // Navigator.push(
-                  // //   context,
-                  // //   MaterialPageRoute(
-                  // //     builder: (context) => AddProductScreen(),
-                  // //   ),
-                  // );
-                },
-
-              ),
-              SizedBox(height: 80.h),
-
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
+
+// void showPhotographerBottomSheet(BuildContext context, Map<String, dynamic> photographer) {
+//   showModalBottomSheet(
+//     context: context,
+//     isScrollControlled: true, // Allows the bottom sheet to expand based on content size
+//     builder: (BuildContext context) {
+//       // Extract data from photographer
+//       String name = photographer['name'] ?? 'Unknown';
+//       String imageUrl = photographer['imageUrl'] ?? 'https://via.placeholder.com/150';
+//       String about = photographer['about'] ?? 'No information available.';
+//       return PhotographerProfileScreen(
+//         photographer: PhotographerModel(
+//           name: name,
+//           imageUrl: imageUrl, // Assumes 'images' is a list
+//           about: about, email: 'email', phone: 'phone', socialLinks: 'socialLinks',
+//         ),
+//       );
+//     },
+//   );
+// }
 }

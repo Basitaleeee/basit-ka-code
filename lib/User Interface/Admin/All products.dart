@@ -112,7 +112,8 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CustomerReviewScreen(),
+                          builder: (context) => CustomerReviewScreen(
+                            productId: products[index]['productId'] ?? 'no product ID',),
                         ),
                       );
                     },
@@ -145,7 +146,8 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CustomerReviewScreen(),
+                          builder: (context) => CustomerReviewScreen(
+                            productId: products[index]['productId'] ?? 'no product ID',),
                         ),
                       );
                     },

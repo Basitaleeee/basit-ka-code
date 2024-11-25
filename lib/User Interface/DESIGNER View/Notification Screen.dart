@@ -20,7 +20,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   final List<Widget> _screens = [
     HomeScreen(),
-    ChatScreen(),
     NotificationScreen(),
     ProfileScreen(),
   ];

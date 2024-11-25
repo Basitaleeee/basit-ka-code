@@ -21,6 +21,7 @@ import '../../Reusable/description textfield.dart';
 import 'Add Category.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Add this function to generate a unique product ID
 String generateProductID() {
@@ -183,6 +184,15 @@ class AddProductScreen extends StatelessWidget {
                   }
 
                   try {
+                    String designerId = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+                    if (designerId.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('No designer logged in.')),
+                      );
+                      return;
+                    }
+
                     // Generate unique product ID
                     String productId = generateProductID();
 
@@ -212,9 +222,9 @@ class AddProductScreen extends StatelessWidget {
                       }
                     }
 
-                    // Save product data to Firestore
+                    // Save product data to Firestore, including the designerId
                     await FirebaseFirestore.instance.collection('products').doc(productId).set({
-                      'productId': productId, // Add the product ID to Firestore
+                      'productId': productId,
                       'name': name,
                       'price': price,
                       'description': description,
@@ -226,6 +236,7 @@ class AddProductScreen extends StatelessWidget {
                       'eventDate': eventDate,
                       'images': imageUrls,
                       'socialLinks': socialLinks,
+                      'designerId': designerId,  // Save the designer's ID here
                       'timestamp': FieldValue.serverTimestamp(),
                     });
 
