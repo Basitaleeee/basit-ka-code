@@ -4,7 +4,7 @@
 // import '../../Models/chat/chatmodel.dart';
 //
 // class ChatScreen extends StatefulWidget {
-//   final String currentUserId;
+//   f  in0al String currentUserId;
 //   final String chatWithUserId;
 //
 //   const ChatScreen({required this.currentUserId, required this.chatWithUserId});

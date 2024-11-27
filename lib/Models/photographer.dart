@@ -14,10 +14,9 @@ class PhotographerModel {
     required this.phone,
     required this.socialLinks,
     required this.imageUrl,
-    required this.about, // Added about parameter
+    required this.about,
   });
 
-  // Convert from map (Firestore data) to PhotographerModel
   factory PhotographerModel.fromMap(Map<String, dynamic> map) {
     return PhotographerModel(
       name: map['name'] ?? '',
@@ -25,11 +24,9 @@ class PhotographerModel {
       phone: map['phone'] ?? '',
       socialLinks: map['socialLinks'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
-      about: map['about'] ?? '', // Fetching about field
+      about: map['about'] ?? '',
     );
   }
-
-  // Convert PhotographerModel to map (for Firestore)
   Map<String, dynamic> toMap() {
     return {
       'name': name,
@@ -37,11 +34,10 @@ class PhotographerModel {
       'phone': phone,
       'socialLinks': socialLinks,
       'imageUrl': imageUrl,
-      'about': about, // Saving about field
+      'about': about,
     };
   }
 
-  // Convert Firestore document snapshot to PhotographerModel
   factory PhotographerModel.fromSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data() as Map<String, dynamic>;
     return PhotographerModel(
@@ -50,7 +46,7 @@ class PhotographerModel {
       phone: data['phone'] ?? '',
       socialLinks: data['socialLinks'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
-      about: data['about'] ?? '', // Fetching about field
+      about: data['about'] ?? '',
     );
   }
 }

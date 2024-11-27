@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart'; // For handling Firestore Timestamp
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessageModel {
   String? id;
@@ -20,24 +20,22 @@ class MessageModel {
         this.isRead,
         this.isReported});
 
-  // Factory constructor to create a MessageModel from Firestore data
+
   factory MessageModel.fromMap(Map<String, dynamic> map) {
     return MessageModel(
-      id: map['id'] ?? '', // Default to empty string if 'id' is null
-      text: map['text'] ?? '', // Default to empty string if 'text' is null
+      id: map['id'] ?? '',
+      text: map['text'] ?? '',
       sender:
-      map['sender'] ?? '', // Default to empty string if 'sender' is null
+      map['sender'] ?? '',
       receiver: map['receiver'] ?? '',
       sentOn: map['sentOn'] != null
           ? (map['sentOn'] as Timestamp).toDate()
-          : null, // Convert Timestamp to DateTime if present
-      img: map['img'] ?? '', // Default to empty string if 'img' is null
-      isRead: map['isRead'] ?? false, // Default to false if 'isRead' is null
+          : null,
+      img: map['img'] ?? '',
+      isRead: map['isRead'] ?? false,
       isReported: map['isReported'] ?? false,
     );
   }
-
-  // Convert MessageModel to Map (for Firestore)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -46,7 +44,7 @@ class MessageModel {
       'receiver': receiver,
       'sentOn': sentOn != null
           ? Timestamp.fromDate(sentOn!)
-          : null, // Convert DateTime to Firestore Timestamp, handle null
+          : null,
       'img': img,
       'isRead': isRead,
       'isReported': isReported
